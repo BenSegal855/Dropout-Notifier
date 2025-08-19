@@ -148,16 +148,6 @@ export class Dropout {
 				text => text.setContent(video.description),
 				text => text.setContent(`-# ${video.slug} | ${video.releaseDate}`)
 			)
-			// .setTitle(video.title)
-			// .setURL(video.url)
-			// .setDescription(video.description)
-			// .setImage(video.thumbnail)
-			// .setColor(DROPOUT_YELLOW)
-			// .setFooter({ text: `${video.slug} | ${video.releaseDate}` })
-			// // .addFields({
-			// 	name: 'Tags',
-			// 	value: `\`${video.tags.join('`, `')}\``
-			// })
 		return [seriesSection, videoContainer];
 	}
 }

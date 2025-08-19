@@ -13,7 +13,7 @@ export class VideoEmitter extends EventEmitter<Record<'NEW_VIDEO', { video: Vide
 
     private constructor() {
 		super();
-		schedule('15 */30 * * * *', async () => {
+		schedule('45 */30 * * * *', async () => {
 		// schedule('*/30 * * * * *', async () => {
 			container.logger.debug('Checking for new videos');
 			const video = (await Dropout.API.getLatestVideos(1))[0];
