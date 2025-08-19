@@ -2,7 +2,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import z from 'zod';
 import { DROPOUT_YELLOW } from './constants';
-import { ContainerBuilder, SectionBuilder } from 'discord.js';
+import { ContainerBuilder, SectionBuilder, TextDisplayBuilder } from 'discord.js';
 
 const AUTH_URL = 'https://www.dropout.tv/browse' as const;
 const TOKEN_RE = /window\.TOKEN = "(?<token>.*)";/;
@@ -21,12 +21,12 @@ const SHOW_PARSER = z.object({
 				tags: z.string().array(),
 				release_dates: z.object({ date: z.iso.date()}).array(),
 				season: z.object({
-					name: z.string(),
-					number: z.int()
+					name: z.string().nullable(),
+					number: z.int().nullable()
 				}),
 				series: z.object({
-					name: z.string(),
-					id: z.string()
+					name: z.string().nullable(),
+					id: z.string().nullable()
 				})
 			})
 		})
@@ -134,10 +134,18 @@ export class Dropout {
 		return season;
 	}
 
-	public static buildComponents(video: Video, season: Season): (ContainerBuilder|SectionBuilder)[] {
-		const seriesSection = new SectionBuilder()
-			.addTextDisplayComponents(text => text.setContent(`New episode of ${video.series.name}: ${season.title}`))
-			.setThumbnailAccessory(thumbnail => thumbnail.setURL(season.thumbnail))
+	public static buildComponents(video: Video, season: Season|null): (ContainerBuilder|SectionBuilder|TextDisplayBuilder)[] {
+		let forwardText = video.series.name ? `New episode of ${video.series.name}` : `A new videos has been released on Dropout`;
+		if (video.series.name && video.season.name) {
+			forwardText = `${forwardText}: ${video.season.name}`;
+		}
+
+		const forwardSection = season
+			? new SectionBuilder().addTextDisplayComponents(text => text.setContent(forwardText))
+			: new TextDisplayBuilder().setContent(forwardText);
+		if (forwardSection instanceof SectionBuilder && season) {
+			forwardSection.setThumbnailAccessory(thumbnail => thumbnail.setURL(season.thumbnail));
+		}
 		
 		const videoContainer = new ContainerBuilder()
 			.setAccentColor(DROPOUT_YELLOW)
@@ -148,7 +156,7 @@ export class Dropout {
 				text => text.setContent(video.description),
 				text => text.setContent(`-# ${video.slug} | ${video.releaseDate}`)
 			)
-		return [seriesSection, videoContainer];
+		return [forwardSection, videoContainer];
 	}
 }
 

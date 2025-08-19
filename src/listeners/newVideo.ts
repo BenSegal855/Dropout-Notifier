@@ -9,7 +9,7 @@ import { MessageFlags } from 'discord.js';
 	event: 'NEW_VIDEO'
 })
 export class NewVideoListener extends Listener {
-	public override async run({ video, season }: {video: Video, season: Season}) {
+	public override async run({ video, season }: {video: Video, season: Season|null}) {
 		const components = Dropout.buildComponents(video, season);
 
 		const allUsers = await this.container.db.users.find().toArray();

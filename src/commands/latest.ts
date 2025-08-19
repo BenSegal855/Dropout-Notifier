@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { Dropout } from '../lib/dropout';
+import { Dropout, Season } from '../lib/dropout';
 import { MessageFlags } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
@@ -17,7 +17,10 @@ export class UserCommand extends Command {
 
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
 		const video = (await Dropout.API.getLatestVideos(1))[0]
-		const season = await Dropout.API.getSeason({ seriesId: video.series.id, seasonNumber: video.season.number })
+		let season: Season|null = null;
+		if (video.series.id && video.season.number)
+			season = await Dropout.API.getSeason({ seriesId: video.series.id, seasonNumber: video.season.number });
+		
 		return interaction.reply({
 			components: Dropout.buildComponents(video, season),
 			flags: MessageFlags.IsComponentsV2
