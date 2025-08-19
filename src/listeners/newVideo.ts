@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import { VideoEmitter } from '../lib/videoEmitter';
 import { Dropout, Season, Video } from '../lib/dropout';
-import { MessageFlags } from 'discord.js';
+import { ActivityType, MessageFlags } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	emitter: VideoEmitter.Emitter,
@@ -21,6 +21,8 @@ export class NewVideoListener extends Listener {
 		})
 
 		const channels = await Promise.all(notifyUsers.map(({ channelId }) => this.container.client.channels.fetch(channelId)));
+
+		this.container.client.user?.setActivity(`${video.title} on Dropout.tv`, { type: ActivityType.Watching, url: video.url});
 
 		await Promise.all(channels.map(channel => {
 			if (!channel || !channel.isSendable()) {

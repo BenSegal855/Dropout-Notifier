@@ -36,7 +36,7 @@ export class VideoEmitter extends EventEmitter<Record<'NEW_VIDEO', { video: Vide
 					return 0;
 				}
 			}));
-			console.log(`Found ${vidsFound.reduce((a, b) => a + b, 0)} video(s)`)
+			container.logger.debug(`Found ${vidsFound.reduce((a, b) => a + b, 0)} video(s)`)
 		});
 	}
 }

@@ -2,6 +2,8 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
+import { Dropout } from '../lib/dropout';
+import { ActivityType } from 'discord.js';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -9,9 +11,12 @@ const dev = process.env.NODE_ENV !== 'production';
 export class UserEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
-	public override run() {
+	public override async run() {
 		this.printBanner();
 		this.printStoreDebugInformation();
+
+		const video = (await Dropout.API.getLatestVideos(1))[0];
+		this.container.client.user?.setActivity(`${video.title} on Dropout.tv`, { type: ActivityType.Watching, url: video.url});
 	}
 
 	private printBanner() {
