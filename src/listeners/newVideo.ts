@@ -22,7 +22,10 @@ export class NewVideoListener extends Listener {
 
 		const channels = await Promise.all(notifyUsers.map(({ channelId }) => this.container.client.channels.fetch(channelId)));
 
-		this.container.client.user?.setActivity(`${video.title} on Dropout.tv`, { type: ActivityType.Watching, url: video.url});
+		this.container.client.user?.setActivity(
+			`${video.series.name ?? video.title} on Dropout.tv`,
+			{ type: ActivityType.Watching }
+		);
 
 		await Promise.all(channels.map(channel => {
 			if (!channel || !channel.isSendable()) {

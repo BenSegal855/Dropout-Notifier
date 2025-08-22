@@ -16,7 +16,10 @@ export class UserEvent extends Listener {
 		this.printStoreDebugInformation();
 
 		const video = (await Dropout.API.getLatestVideos(1))[0];
-		this.container.client.user?.setActivity(`${video.title} on Dropout.tv`, { type: ActivityType.Watching, url: video.url});
+		this.container.client.user?.setActivity(
+			`${video.series.name ?? video.title} on Dropout.tv`,
+			{ type: ActivityType.Watching }
+		);
 	}
 
 	private printBanner() {
