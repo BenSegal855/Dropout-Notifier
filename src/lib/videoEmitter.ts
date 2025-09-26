@@ -20,7 +20,10 @@ export class VideoEmitter extends EventEmitter<Record<'NEW_VIDEO', { video: Vide
 			const videos = (await Dropout.API.getLatestVideos(5));
 
 			const vidsFound: number[] = await Promise.all(videos.map(async video => {
-				const isOld = (await container.db.videos.countDocuments(video)) > 0;
+				const isOld = (await container.db.videos.countDocuments({
+					url: video.url,
+					slug: video.slug
+				})) > 0;
 	
 				if (!isOld) {
 					container.logger.debug('New video found', inspect(video, { depth: 2 }));
